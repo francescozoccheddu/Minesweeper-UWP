@@ -92,7 +92,7 @@ namespace Minesweeper.Logic
                 int r = random.Next(CellCount - t);
                 for (int o = 0; o < CellCount; o++)
                 {
-                    int c = (t + o) % CellCount;
+                    int c = (r + o) % CellCount;
                     int x = t % Width;
                     int y = t / Width;
                     if (_pickable((x, y)))

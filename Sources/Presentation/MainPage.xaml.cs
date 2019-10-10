@@ -94,9 +94,17 @@ namespace Minesweeper
 
         private bool IsNotNull(object _obj) => _obj != null;
 
+        private Visibility IsNotNullVis(object _obj) => BoolToVisibility(IsNotNull(_obj));
+
+        private Visibility BoolToVisibility(bool _b) => _b ? Visibility.Visible : Visibility.Collapsed;
+
         private bool IsPositive(int _n) => _n > 0;
 
-        private bool IsFlaggable() => m_UsedFlags < (m_Minefield?.CellCount - m_Minefield?.BombCount);
+        private string GridSizeString(int _w, int _h) => $"{_w}x{_h}";
+
+        private string DenominatorString(int _n) => $"/{_n}";
+
+        private bool IsFlaggable() => m_UsedFlags < m_Minefield?.BombCount;
 
         private void InitializeGrid(Minefield _minefield)
         {
@@ -185,6 +193,7 @@ namespace Minesweeper
                         {
                             m_luckyIcon.Glyph = "u";
                         }
+                        break;
                     }
                 }
             }
