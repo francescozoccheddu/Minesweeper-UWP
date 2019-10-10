@@ -19,7 +19,7 @@ namespace Minesweeper
             m_Grid.ColumnDefinitions.Clear();
             m_Grid.RowDefinitions.Clear();
             m_Grid.Children.Clear();
-            GridLength star = new GridLength(1, GridUnitType.Star);
+            GridLength star = new GridLength(40, GridUnitType.Pixel);
             for (int x = 0; x < _minefield.Width; x++)
             {
                 m_Grid.ColumnDefinitions.Add(new ColumnDefinition
@@ -50,6 +50,21 @@ namespace Minesweeper
                 }
             }
         }
-
+        /*
+        private void GridContainer_SizeChanged(object _sender, SizeChangedEventArgs _e)
+        {
+            double gridAspect = m_Grid.RowDefinitions.Count / (double) m_Grid.ColumnDefinitions.Count;
+            double containerAspect = m_GridContainer.Height / m_GridContainer.Width;
+            if (gridAspect < containerAspect)
+            {
+                m_Grid.Height = m_GridContainer.Height;
+                m_Grid.Width = m_Grid.Height / gridAspect;
+            }
+            else
+            {
+                m_Grid.Width = m_GridContainer.Width;
+                m_Grid.Height = m_Grid.Width * gridAspect;
+            }
+        }*/
     }
 }

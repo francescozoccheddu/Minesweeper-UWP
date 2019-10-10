@@ -9,8 +9,69 @@
     x:FieldModifier="private"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid x:Name="m_GridContainer">
-        <Grid x:Name="m_Grid" ColumnSpacing="4" RowSpacing="4" Margin="20"/>
-    </Grid>
+    <Viewbox x:Name="m_GridSizer" Stretch="Uniform">
+        <Grid x:Name="m_Grid" 
+              ColumnSpacing="4" 
+              RowSpacing="4" 
+              Margin="20" />
+    </Viewbox>
+
+    <Page.BottomAppBar>
+        <CommandBar OverflowButtonVisibility="Collapsed" ClosedDisplayMode="Compact">
+            <CommandBar.Content>
+                <StackPanel Orientation="Horizontal" 
+                            Margin="10,0,10,0"
+                            VerticalAlignment="Center">
+                    <StackPanel Orientation="Vertical" 
+                                VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="6" ToolTipService.ToolTip="Grid size">
+                            <FontIcon Glyph="g" FontSize="11"/>
+                            <TextBlock FontSize="11">20x20</TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="6" ToolTipService.ToolTip="Mines count">
+                            <FontIcon Glyph="b" FontSize="11"/>
+                            <TextBlock FontSize="11">80</TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                    <AppBarSeparator/>
+                    <StackPanel Orientation="Horizontal" 
+                                VerticalAlignment="Center"
+                                Spacing="10"
+                                ToolTipService.ToolTip="Flag count"
+                                >
+                        <FontIcon Glyph="f"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>20</TextBlock>
+                            <TextBlock FontSize="10">/20</TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                    <AppBarSeparator/>
+                    <TextBlock VerticalAlignment="Center"
+                               FontSize="10"
+                               ToolTipService.ToolTip="I see you"
+                               >
+                        Created with ❤ by <Bold>Francesco Zoccheddu</Bold>
+                    </TextBlock>
+                </StackPanel>
+            </CommandBar.Content>
+            <CommandBar.PrimaryCommands>
+                <AppBarButton Label="New game" ToolTipService.ToolTip="New game">
+                    <AppBarButton.Icon>
+                        <FontIcon FontFamily="{StaticResource IconFont}" Glyph="n"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton Label="Restart game" ToolTipService.ToolTip="Restart game">
+                    <AppBarButton.Icon>
+                        <FontIcon FontFamily="{StaticResource IconFont}" Glyph="r"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton Label="I'm feeling lucky" ToolTipService.ToolTip="I'm feeling lucky">
+                    <AppBarButton.Icon>
+                        <FontIcon FontFamily="{StaticResource IconFont}" Glyph="l"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+            </CommandBar.PrimaryCommands>
+        </CommandBar>
+    </Page.BottomAppBar>
 
 </Page>
