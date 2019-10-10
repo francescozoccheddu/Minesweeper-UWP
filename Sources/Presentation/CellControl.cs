@@ -1,4 +1,5 @@
 ﻿using Minesweeper.Logic;
+using System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
@@ -7,10 +8,14 @@ namespace Minesweeper.Presentation
     internal class CellControl : Button
     {
 
-        public CellControl()
+        public (int x, int y) Index { get; }
+
+        public CellControl(int _x, int _y)
         {
+            Content = new FontIcon();
             UpdateState();
             IsRightTapEnabled = true;
+            Index = (_x, _y);
         }
 
         public enum EState
@@ -54,34 +59,33 @@ namespace Minesweeper.Presentation
 
         public event OnStateChangedHandler OnStateChanged;
 
+        public Func<bool> Flaggable { get; set; } = null;
+
         public void UpdateState()
         {
             IsEnabled = State != EState.UNCOVERED;
+            char icon = '0';
             switch (State)
             {
-                case EState.COVERED:
-                {
-                    Content = "0";
-                }
-                break;
                 case EState.UNCOVERED:
                 {
-                    if (Data.IsMine)
+                    if (Data.IsBomb)
                     {
-                        Content = "M";
+                        icon = 'b';
                     }
                     else
                     {
-                        Content = Data.Neighbors;
+                        icon = Data.Neighbors.ToString()[0];
                     }
                 }
                 break;
                 case EState.FLAGGED:
                 {
-                    Content = "F";
+                    icon = 'f';
                 }
                 break;
             }
+            (Content as FontIcon).Glyph = icon.ToString();
         }
 
         protected override void OnTapped(TappedRoutedEventArgs _e)
@@ -103,7 +107,7 @@ namespace Minesweeper.Presentation
             base.OnRightTapped(_e);
             switch (State)
             {
-                case EState.COVERED:
+                case EState.COVERED when Flaggable?.Invoke() == true:
                 State = EState.FLAGGED;
                 break;
                 case EState.FLAGGED:

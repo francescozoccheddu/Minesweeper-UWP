@@ -8,7 +8,7 @@ namespace Minesweeper.Logic
 
         public interface ICell
         {
-            bool IsMine { get; }
+            bool IsBomb { get; }
             int Neighbors { get; }
 
         }
@@ -16,47 +16,47 @@ namespace Minesweeper.Logic
         private readonly struct Cell : ICell
         {
 
-            public const int c_mine = -1;
+            public const int c_bomb = -1;
 
             private readonly int m_data;
             public Cell(int _data)
             {
-                if (_data != c_mine && (_data < 0 || _data > 8))
+                if (_data != c_bomb && (_data < 0 || _data > 8))
                 {
                     throw new ArgumentOutOfRangeException("Invalid data");
                 }
                 m_data = _data;
             }
 
-            public bool IsMine => m_data != -1;
+            public bool IsBomb => m_data == c_bomb;
 
-            public int Neighbors => IsMine ? throw new InvalidOperationException() : m_data;
+            public int Neighbors => IsBomb ? throw new InvalidOperationException() : m_data;
         }
 
         private const int c_maxSize = 64;
         private readonly int[,] m_cells;
 
-        public Minefield(int _w, int _h, int _mineCount)
+        public Minefield(int _w, int _h, int _bombCount)
         {
             if (_w < 1 || _h < 1 || _w > c_maxSize || _h > c_maxSize)
             {
                 throw new ArgumentOutOfRangeException("Invalid size");
             }
-            if (_mineCount < 0 || _mineCount > _w * _h)
+            if (_bombCount < 0 || _bombCount > _w * _h)
             {
-                throw new ArgumentOutOfRangeException("Invalid mine count");
+                throw new ArgumentOutOfRangeException("Invalid bomb count");
             }
-            MineCount = _mineCount;
+            BombCount = _bombCount;
             m_cells = new int[_w, _h];
             InitializeCells();
         }
 
         private void InitializeCells()
         {
-            bool additive = MineCount * 2 < CellCount;
+            bool additive = BombCount * 2 < CellCount;
             // Fill
             {
-                int initValue = additive ? 0 : Cell.c_mine;
+                int initValue = additive ? 0 : Cell.c_bomb;
                 for (int x = 0; x < Width; x++)
                 {
                     for (int y = 0; y < Height; y++)
@@ -67,15 +67,15 @@ namespace Minesweeper.Logic
             }
             // Add
             {
-                int count = additive ? MineCount : (CellCount - MineCount);
+                int count = additive ? BombCount : (CellCount - BombCount);
                 int influence = additive ? +1 : -1;
-                int drop = additive ? Cell.c_mine : 0;
-                foreach ((int x, int y) in Random(count, _t => m_cells[_t.x, _t.y] == Cell.c_mine ^ additive))
+                int drop = additive ? Cell.c_bomb : 0;
+                foreach ((int x, int y) in Random(count, _t => m_cells[_t.x, _t.y] == Cell.c_bomb ^ additive))
                 {
                     m_cells[x, y] = drop;
                     foreach ((int nx, int ny) in Neighborhood(x, y))
                     {
-                        if (m_cells[nx, ny] != Cell.c_mine)
+                        if (m_cells[nx, ny] != Cell.c_bomb)
                         {
                             m_cells[nx, ny] += influence;
                         }
@@ -92,8 +92,9 @@ namespace Minesweeper.Logic
                 int r = random.Next(CellCount - t);
                 for (int o = 0; o < CellCount; o++)
                 {
-                    int x = o % Width;
-                    int y = o / Width;
+                    int c = (t + o) % CellCount;
+                    int x = t % Width;
+                    int y = t / Width;
                     if (_pickable((x, y)))
                     {
                         yield return (x, y);
@@ -154,7 +155,7 @@ namespace Minesweeper.Logic
         public int Width => m_cells.GetLength(0);
         public int Height => m_cells.GetLength(1);
         public int CellCount => Width * Height;
-        public int MineCount { get; }
+        public int BombCount { get; }
         public ICell this[int _x, int _y] => new Cell(m_cells[_x, _y]);
         public ICell this[(int x, int y) _p] => this[_p.x, _p.y];
 
