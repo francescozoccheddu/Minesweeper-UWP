@@ -121,8 +121,8 @@
     </Compile>
     <Compile Include="Sources\Logic\Minefield.cs" />
     <Compile Include="Sources\Presentation\CellControl.cs" />
-    <Compile Include="Sources\SettingsPage.xaml.cs">
-      <DependentUpon>SettingsPage.xaml</DependentUpon>
+    <Compile Include="Sources\MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -146,7 +146,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Sources\SettingsPage.xaml">
+    <Page Include="Sources\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

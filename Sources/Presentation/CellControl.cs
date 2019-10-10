@@ -11,7 +11,6 @@ namespace Minesweeper.Presentation
         {
             UpdateState();
             IsRightTapEnabled = true;
-
         }
 
         public enum EState
@@ -62,7 +61,7 @@ namespace Minesweeper.Presentation
             {
                 case EState.COVERED:
                 {
-                    Content = null;
+                    Content = "0";
                 }
                 break;
                 case EState.UNCOVERED:

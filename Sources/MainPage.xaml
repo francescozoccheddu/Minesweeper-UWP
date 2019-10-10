@@ -6,21 +6,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    x:FieldModifier="private"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-
-    <StackPanel Orientation="Vertical" Margin="20">
-
-        <TextBlock Style="{StaticResource HeaderTextBlockStyle}">Settings</TextBlock>
-
-        <StackPanel Orientation="Horizontal">
-
-            <local:CellControl>
-
-            </local:CellControl>
-
-        </StackPanel>
-
-    </StackPanel>
+    <Grid x:Name="m_GridContainer">
+        <Grid x:Name="m_Grid" ColumnSpacing="4" RowSpacing="4" Margin="20"/>
+    </Grid>
 
 </Page>
