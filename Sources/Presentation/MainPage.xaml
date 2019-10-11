@@ -10,33 +10,23 @@
     x:FieldModifier="private"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <StackPanel x:Name="Diocane">
-
-
-        <Viewbox x:Name="m_GridSizer" Stretch="Uniform" Visibility="Collapsed">
-            <Grid x:Name="m_Grid" 
-              ColumnSpacing="4" 
-              RowSpacing="4" 
-              Margin="20" 
-              XYFocusKeyboardNavigation="Enabled"
-              TabFocusNavigation="Once"
-              />
-        </Viewbox>
-    </StackPanel>
+    <Viewbox Stretch="Uniform" Margin="20">
+        <presentation:GridControl x:Name="m_grid"/>
+    </Viewbox>
 
     <Page.BottomAppBar>
         <CommandBar OverflowButtonVisibility="Collapsed" ClosedDisplayMode="Compact" VerticalContentAlignment="Top">
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal" Height="{StaticResource AppBarThemeCompactHeight}" VerticalAlignment="Top" Margin="14,0,14,0">
                     <StackPanel Orientation="Horizontal" 
-                                Visibility="{x:Bind IsNotNullVis(m_Minefield)}"
+                                Visibility="{x:Bind IsNotNullVis(m_grid.Minefield)}"
                                 VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" 
                                     VerticalAlignment="Center"
                                     Spacing="6" 
                                     ToolTipService.ToolTip="Grid size">
                             <FontIcon Glyph="g"/>
-                            <TextBlock Text="{x:Bind GridSizeString(m_Minefield.Width, m_Minefield.Height)}"/>
+                            <TextBlock Text="{x:Bind GridSizeString(m_grid.Minefield.Width, m_grid.Minefield.Height)}"/>
                         </StackPanel>
                         <AppBarSeparator/>
                         <StackPanel Orientation="Horizontal" 
@@ -44,7 +34,7 @@
                                     Spacing="6" 
                                     ToolTipService.ToolTip="Mines count">
                             <FontIcon Glyph="b"/>
-                            <TextBlock Text="{x:Bind m_Minefield.BombCount}"/>
+                            <TextBlock Text="{x:Bind m_grid.Minefield.BombCount}"/>
                         </StackPanel>
                         <AppBarSeparator/>
                         <StackPanel Orientation="Horizontal" 
@@ -53,8 +43,8 @@
                                     ToolTipService.ToolTip="Flag count">
                             <FontIcon Glyph="f"/>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{x:Bind m_UsedFlags}"/>
-                                <TextBlock FontSize="10" Text="{x:Bind DenominatorString(m_Minefield.BombCount)}"/>
+                                <TextBlock Text="{x:Bind m_grid.UsedFlags}"/>
+                                <TextBlock FontSize="10" Text="{x:Bind DenominatorString(m_grid.Minefield.BombCount)}"/>
                             </StackPanel>
                         </StackPanel>
                         <AppBarSeparator/>
@@ -72,12 +62,12 @@
                         <FontIcon FontFamily="{StaticResource IconFont}" Glyph="n"/>
                     </AppBarButton.Icon>
                 </AppBarButton>
-                <AppBarButton Label="Restart game" ToolTipService.ToolTip="Restart game" Click="ResetButton_Click" IsEnabled="{x:Bind IsNotNull(m_Minefield)}">
+                <AppBarButton Label="Restart game" ToolTipService.ToolTip="Restart game" Click="ResetButton_Click" IsEnabled="{x:Bind IsNotNull(m_grid.Minefield)}">
                     <AppBarButton.Icon>
                         <FontIcon FontFamily="{StaticResource IconFont}" Glyph="r"/>
                     </AppBarButton.Icon>
                 </AppBarButton>
-                <AppBarButton Label="I'm feeling lucky" ToolTipService.ToolTip="I'm feeling lucky" Click="LuckyButton_Click" IsEnabled="{x:Bind IsPositive(m_Covered)}">
+                <AppBarButton Label="I'm feeling lucky" ToolTipService.ToolTip="I'm feeling lucky" Click="LuckyButton_Click" IsEnabled="{x:Bind m_grid.Playing}">
                     <AppBarButton.Icon>
                         <FontIcon x:Name="m_luckyIcon" FontFamily="{StaticResource IconFont}" Glyph="l"/>
                     </AppBarButton.Icon>

@@ -120,9 +120,11 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Sources\Logic\Minefield.cs" />
-    <Compile Include="Sources\Presentation\CellControl.cs" />
-    <Compile Include="Sources\Presentation\CellControl2.xaml.cs">
-      <DependentUpon>CellControl2.xaml</DependentUpon>
+    <Compile Include="Sources\Presentation\CellControl.xaml.cs">
+      <DependentUpon>CellControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Sources\Presentation\GridControl.xaml.cs">
+      <DependentUpon>GridControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Sources\Presentation\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -152,7 +154,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Sources\Presentation\CellControl2.xaml">
+    <Page Include="Sources\Presentation\CellControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Sources\Presentation\GridControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

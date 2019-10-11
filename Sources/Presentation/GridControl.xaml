@@ -1,0 +1,18 @@
+﻿<UserControl
+    x:Class="Minesweeper.Presentation.GridControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:FieldModifier="private">
+
+    <UserControl.Resources>
+        <x:Double x:Key="Spacing">10</x:Double>
+    </UserControl.Resources>
+
+    <Grid x:Name="m_grid" 
+          ColumnSpacing="{StaticResource Spacing}" 
+          RowSpacing="{StaticResource Spacing}" 
+          XYFocusKeyboardNavigation="Enabled"
+          TabFocusNavigation="Once"
+          />
+
+</UserControl>

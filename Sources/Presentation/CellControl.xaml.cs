@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Minesweeper.Presentation
 {
-    internal sealed partial class CellControl2 : UserControl
+    internal sealed partial class CellControl : UserControl
     {
 
         public interface IGrid
@@ -19,7 +19,7 @@ namespace Minesweeper.Presentation
 
         }
 
-        public CellControl2(Minefield.ICell _data, (int x, int y) _index, IGrid _grid)
+        public CellControl(Minefield.ICell _data, (int x, int y) _index, IGrid _grid)
         {
             if (_data == null)
             {
@@ -47,8 +47,8 @@ namespace Minesweeper.Presentation
             FLAGGED, UNCOVERED, COVERED
         }
 
-        public delegate void FlagEventHandler(CellControl2 _sender, bool _flagged);
-        public delegate void UncoverEventHandler(CellControl2 _sender);
+        public delegate void FlagEventHandler(CellControl _sender, bool _flagged);
+        public delegate void UncoverEventHandler(CellControl _sender);
 
         public event FlagEventHandler OnFlagChanged;
         public event UncoverEventHandler OnUncovered;
