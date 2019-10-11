@@ -15,8 +15,6 @@ namespace Minesweeper.Presentation
 
             bool CanFlag { get; }
 
-            bool HasCoveredNeighbors((int x, int y) _index);
-
             UIElement FocusSearchRoot { get; }
 
             Control GetFocusNeighbor((int x, int y) _index);
@@ -36,6 +34,7 @@ namespace Minesweeper.Presentation
             m_grid = _grid;
             Index = _index;
             m_uncoveredGlyph = _data.IsBomb ? "b" : _data.Neighbors.ToString();
+            m_hasNeighbors = !_data.IsBomb && _data.Neighbors > 0;
             // Initialize
             InitializeComponent();
             IsTabStop = true;
@@ -61,6 +60,7 @@ namespace Minesweeper.Presentation
         private EState m_state = EState.COVERED;
 
         private readonly string m_uncoveredGlyph;
+        private readonly bool m_hasNeighbors;
 
         public EState State
         {
@@ -86,7 +86,7 @@ namespace Minesweeper.Presentation
                 break;
                 case EState.UNCOVERED:
                 m_CanFlag = false;
-                m_CanUncover = m_grid.HasCoveredNeighbors(Index);
+                m_CanUncover = m_hasNeighbors;
                 VisualStateManager.GoToState(this, "StateUncovered", true);
                 break;
                 case EState.COVERED:

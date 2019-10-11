@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 
 namespace Minesweeper.Presentation
 {
@@ -67,7 +66,7 @@ namespace Minesweeper.Presentation
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UncoveredCells)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CoveredCells)));
 
-            foreach (var nc in Minefield
+            foreach (CellControl nc in Minefield
                 .Expand(_c.Index, _t => m_cells[_t.x, _t.y].State == CellControl.EState.COVERED)
                 .Select(_t => m_cells[_t.x, _t.y]))
             {
@@ -129,7 +128,7 @@ namespace Minesweeper.Presentation
                         cell.OnUncovered += Uncovered;
                         cell.OnUncoverNeighbors += (_c) =>
                         {
-                            foreach ((int nx, int ny) in Minefield.Neighborhood(_c.Index.x, _c.Index.y))
+                            foreach ((int nx, int ny) in Minefield.Neighborhood(_c.Index))
                             {
                                 CellControl nc = m_cells[nx, ny];
                                 if (nc.State == CellControl.EState.COVERED)
@@ -188,8 +187,6 @@ namespace Minesweeper.Presentation
             Minefield = new Minefield(Minefield.Width, Minefield.Height, Minefield.BombCount);
         }
 
-        bool CellControl.IGrid.HasCoveredNeighbors((int x, int y) _index) => false;
-
         public bool TryLuck()
         {
             int r = new Random().Next(CoveredCells.Value);
@@ -209,7 +206,8 @@ namespace Minesweeper.Presentation
             return false;
         }
 
-        Control CellControl.IGrid.GetFocusNeighbor((int x, int y) _index) => Minefield.Neighborhood(_index.x, _index.y)
+        Control CellControl.IGrid.GetFocusNeighbor((int x, int y) _index) =>
+            Minefield.Neighborhood(_index)
             .Select(_i => m_cells[_i.x, _i.y])
             .FirstOrDefault(_c => _c.State != CellControl.EState.UNCOVERED);
     }

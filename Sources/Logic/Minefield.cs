@@ -74,11 +74,11 @@ namespace Minesweeper.Logic
                 int count = additive ? BombCount : (CellCount - BombCount);
                 int influence = additive ? +1 : -1;
                 int drop = additive ? Cell.c_bomb : 0;
-                foreach ((int x, int y) in Random(count, _t => m_cells[_t.x, _t.y] == Cell.c_bomb ^ additive))
+                foreach ((int x, int y) r in Random(count, _t => m_cells[_t.x, _t.y] == Cell.c_bomb ^ additive))
                 {
-                    m_cells[x, y] = drop;
+                    m_cells[r.x, r.y] = drop;
                     int bombs = 0;
-                    foreach ((int nx, int ny) in Neighborhood(x, y))
+                    foreach ((int nx, int ny) in Neighborhood(r))
                     {
                         if (m_cells[nx, ny] != Cell.c_bomb)
                         {
@@ -91,7 +91,7 @@ namespace Minesweeper.Logic
                     }
                     if (!additive)
                     {
-                        m_cells[x, y] = bombs;
+                        m_cells[r.x, r.y] = bombs;
                     }
                 }
             }
@@ -112,18 +112,22 @@ namespace Minesweeper.Logic
             }
         }
 
-        public IEnumerable<(int x, int y)> Neighborhood(int _x, int _y)
+        public IEnumerable<(int x, int y)> Neighborhood((int x, int y) _c, bool _includeCenter = false)
         {
-            ValidateIndex(_x, _y);
-            int minX = Math.Max(_x - 1, 0);
-            int minY = Math.Max(_y - 1, 0);
-            int maxX = Math.Min(_x + 1, Width - 1);
-            int maxY = Math.Min(_y + 1, Height - 1);
+            ValidateIndex(_c.x, _c.y);
+            int minX = Math.Max(_c.x - 1, 0);
+            int minY = Math.Max(_c.y - 1, 0);
+            int maxX = Math.Min(_c.x + 1, Width - 1);
+            int maxY = Math.Min(_c.y + 1, Height - 1);
             for (int x = minX; x <= maxX; x++)
             {
                 for (int y = minY; y <= maxY; y++)
                 {
-                    yield return (x, y);
+                    (int x, int y) c = (x, y);
+                    if (_includeCenter || c != _c)
+                    {
+                        yield return c;
+                    }
                 }
             }
         }
@@ -140,7 +144,7 @@ namespace Minesweeper.Logic
                 yield return c;
                 if (m_cells[c.x, c.y] == 0)
                 {
-                    foreach ((int x, int y) n in Neighborhood(c.x, c.y))
+                    foreach ((int x, int y) n in Neighborhood(c))
                     {
                         if (!found.Contains(n) && _filter(n))
                         {
