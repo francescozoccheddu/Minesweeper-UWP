@@ -15,7 +15,11 @@ namespace Minesweeper.Presentation
 
             bool CanFlag { get; }
 
-            bool HasCoveredNeighbors((int, int) _index);
+            bool HasCoveredNeighbors((int x, int y) _index);
+
+            UIElement FocusSearchRoot { get; }
+
+            Control GetFocusNeighbor((int x, int y) _index);
 
         }
 
@@ -56,7 +60,7 @@ namespace Minesweeper.Presentation
 
         private EState m_state = EState.COVERED;
 
-        private readonly String m_uncoveredGlyph;
+        private readonly string m_uncoveredGlyph;
 
         public EState State
         {
@@ -142,7 +146,7 @@ namespace Minesweeper.Presentation
                 State = EState.FLAGGED;
                 break;
             }
-            OnFlagChanged?.Invoke(this, State == EState.COVERED);
+            OnFlagChanged?.Invoke(this, State == EState.FLAGGED);
         }
 
         private void Uncover()
@@ -165,7 +169,26 @@ namespace Minesweeper.Presentation
 
         #region Input
 
-        public void UpdateIsEnabled() => IsEnabled = m_CanFlag || m_CanUncover;
+        public void UpdateIsEnabled()
+        {
+            bool shouldBeEnabled = m_CanFlag || m_CanUncover;
+            if (IsEnabled && !shouldBeEnabled && m_focused)
+            {
+                if (m_grid.GetFocusNeighbor(Index)?.Focus(FocusState.Programmatic) != true)
+                {
+                    FindNextElementOptions options = new FindNextElementOptions()
+                    {
+                        SearchRoot = m_grid.FocusSearchRoot
+                    };
+                    bool done =
+                        FocusManager.TryMoveFocus(FocusNavigationDirection.Right, options)
+                        || FocusManager.TryMoveFocus(FocusNavigationDirection.Down, options)
+                        || FocusManager.TryMoveFocus(FocusNavigationDirection.Left, options)
+                        || FocusManager.TryMoveFocus(FocusNavigationDirection.Up, options);
+                }
+            }
+            IsEnabled = shouldBeEnabled;
+        }
 
         private enum EInputType
         {
@@ -174,8 +197,8 @@ namespace Minesweeper.Presentation
 
         private EInputType? m_pendingInput = null;
         private object m_pendingInputInfo = null;
-
         private Pointer m_capturedPointer = null;
+        private bool m_focused;
 
         private bool m_PendingFlag => m_pendingInput == EInputType.PointerFlag || m_pendingInput == EInputType.KeyFlag;
         private bool m_PendingUncover => m_pendingInput == EInputType.PointerUncover || m_pendingInput == EInputType.KeyUncover;
@@ -289,14 +312,17 @@ namespace Minesweeper.Presentation
         protected override void OnPointerPressed(PointerRoutedEventArgs _e)
         {
             base.OnPointerPressed(_e);
-            _e.Handled = true;
             if (m_capturedPointer == null)
             {
                 EInputType? type = GetInputType(_e);
-                if (type is EInputType ntype && ProcessInput(ntype, true, _e.Pointer.PointerId))
+                if (type is EInputType ntype)
                 {
-                    m_capturedPointer = _e.Pointer;
-                    CapturePointer(_e.Pointer);
+                    _e.Handled = true;
+                    if (ProcessInput(ntype, true, _e.Pointer.PointerId))
+                    {
+                        m_capturedPointer = _e.Pointer;
+                        CapturePointer(_e.Pointer);
+                    }
                 }
             }
         }
@@ -304,10 +330,10 @@ namespace Minesweeper.Presentation
         protected override void OnPointerReleased(PointerRoutedEventArgs _e)
         {
             base.OnPointerReleased(_e);
-            _e.Handled = true;
             EInputType? type = GetInputType(_e);
             if (type is EInputType ntype)
             {
+                _e.Handled = true;
                 ProcessInput(ntype, false, _e.Pointer.PointerId);
             }
         }
@@ -315,10 +341,10 @@ namespace Minesweeper.Presentation
         protected override void OnPointerCanceled(PointerRoutedEventArgs _e)
         {
             base.OnPointerCanceled(_e);
-            _e.Handled = true;
             EInputType? type = GetInputType(_e);
             if (type is EInputType ntype)
             {
+                _e.Handled = true;
                 ProcessInput(ntype, false, _e.Pointer.PointerId);
             }
         }
@@ -326,9 +352,9 @@ namespace Minesweeper.Presentation
         protected override void OnPointerEntered(PointerRoutedEventArgs _e)
         {
             base.OnPointerEntered(_e);
-            _e.Handled = true;
             if (m_CanFlag || m_CanUncover)
             {
+                _e.Handled = true;
                 VisualStateManager.GoToState(this, "PointerInside", true);
             }
         }
@@ -343,6 +369,7 @@ namespace Minesweeper.Presentation
         protected override void OnGotFocus(RoutedEventArgs _e)
         {
             base.OnGotFocus(_e);
+            m_focused = true;
             if (m_CanFlag || m_CanUncover)
             {
                 VisualStateManager.GoToState(this, "Focused", true);
@@ -352,6 +379,7 @@ namespace Minesweeper.Presentation
         protected override void OnLostFocus(RoutedEventArgs _e)
         {
             base.OnLostFocus(_e);
+            m_focused = false;
             VisualStateManager.GoToState(this, "Unfocused", true);
             if (m_pendingInput == EInputType.KeyFlag || m_pendingInput == EInputType.KeyUncover)
             {
@@ -362,10 +390,10 @@ namespace Minesweeper.Presentation
         protected override void OnKeyDown(KeyRoutedEventArgs _e)
         {
             base.OnKeyDown(_e);
-            _e.Handled = true;
             EInputType? type = GetInputType(_e);
             if (type is EInputType ntype)
             {
+                _e.Handled = true;
                 ProcessInput(ntype, true, (_e.DeviceId, _e.Key));
             }
         }
@@ -373,10 +401,10 @@ namespace Minesweeper.Presentation
         protected override void OnKeyUp(KeyRoutedEventArgs _e)
         {
             base.OnKeyUp(_e);
-            _e.Handled = true;
             EInputType? type = GetInputType(_e);
             if (type is EInputType ntype)
             {
+                _e.Handled = true;
                 ProcessInput(ntype, false, (_e.DeviceId, _e.Key));
             }
         }

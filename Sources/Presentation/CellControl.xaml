@@ -62,16 +62,19 @@
                 <VisualState x:Name="StateFlagged">
                     <VisualState.Setters>
                         <Setter Target="m_icon.Glyph" Value="f"/>
+                        <Setter Target="m_rectangle.Opacity" Value="1"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="StateCovered">
                     <VisualState.Setters>
                         <Setter Target="m_icon.Glyph" Value=""/>
+                        <Setter Target="m_rectangle.Opacity" Value="1"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="StateUncovered">
                     <VisualState.Setters>
                         <Setter Target="m_icon.Glyph" Value="{x:Bind m_uncoveredGlyph}"/>
+                        <Setter Target="m_rectangle.Opacity" Value="0.25"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

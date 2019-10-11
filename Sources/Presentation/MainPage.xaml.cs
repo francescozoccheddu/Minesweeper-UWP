@@ -7,12 +7,10 @@ using Windows.UI.Xaml.Controls;
 
 namespace Minesweeper
 {
-    internal sealed partial class MainPage : Page, INotifyPropertyChanged
+    internal sealed partial class MainPage : Page
     {
 
         public MainPage() => InitializeComponent();
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         private bool IsNotNull(object _obj) => _obj != null;
 
@@ -31,10 +29,15 @@ namespace Minesweeper
             if (result == ContentDialogResult.Primary)
             {
                 m_grid.Minefield = new Minefield(dialog.WidthSetting, dialog.HeightSetting, dialog.BombsCountSetting);
+                m_luckyIcon.Glyph = "l";
             }
         }
 
-        private void ResetButton_Click(object _sender, RoutedEventArgs _e) => m_grid.Restart();
+        private void ResetButton_Click(object _sender, RoutedEventArgs _e)
+        {
+            m_grid.Restart();
+            m_luckyIcon.Glyph = "l";
+        }
 
         private void LuckyButton_Click(object _sender, RoutedEventArgs _e)
         {
