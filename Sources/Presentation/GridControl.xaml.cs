@@ -66,10 +66,19 @@ namespace Minesweeper.Presentation
             m_uncoveredCells++;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UncoveredCells)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CoveredCells)));
+
+            foreach (var nc in Minefield
+                .Expand(_c.Index, _t => m_cells[_t.x, _t.y].State == CellControl.EState.COVERED)
+                .Select(_t => m_cells[_t.x, _t.y]))
+            {
+                Uncover(nc);
+            }
+
             if (CoveredCells <= 0 || Minefield[_c.Index].IsBomb)
             {
                 Stop();
             }
+
         }
 
         private void Populate()

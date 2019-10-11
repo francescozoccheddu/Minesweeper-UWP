@@ -99,7 +99,7 @@ namespace Minesweeper.Logic
 
         private IEnumerable<(int x, int y)> Random(int _count, Predicate<(int x, int y)> _pickable)
         {
-            var random = new Random();
+            Random random = new Random();
             while (_count > 0)
             {
                 int r = random.Next(CellCount);
@@ -128,31 +128,28 @@ namespace Minesweeper.Logic
             }
         }
 
-        public IEnumerable<(int x, int y)> Expand(int _x, int _y, Predicate<(int x, int y)> _filter)
+        public IEnumerable<(int x, int y)> Expand((int x, int y) _c, Predicate<(int x, int y)> _filter)
         {
             HashSet<(int, int)> found = new HashSet<(int, int)>();
             Stack<(int, int)> stack = new Stack<(int, int)>();
-            void Push((int x, int y) _c)
-            {
-                if (m_cells[_c.x, _c.y] == 0 && !found.Contains(_c) && _filter(_c))
-                {
-                    stack.Push(_c);
-                    found.Add(_c);
-                }
-            }
-            Push((_x, _y));
+            stack.Push(_c);
             while (stack.Count > 0)
             {
                 (int x, int y) c = stack.Pop();
+                found.Add(c);
                 yield return c;
-                foreach ((int, int) n in Neighborhood(c.x, c.y))
+                if (m_cells[c.x, c.y] == 0)
                 {
-                    Push(n);
+                    foreach ((int x, int y) n in Neighborhood(c.x, c.y))
+                    {
+                        if (!found.Contains(n) && _filter(n))
+                        {
+                            stack.Push(n);
+                        }
+                    }
                 }
             }
         }
-
-        public IEnumerable<(int x, int y)> Expand(int _x, int _y) => Expand(_x, _y, _t => true);
 
         public int Width => m_cells.GetLength(0);
         public int Height => m_cells.GetLength(1);

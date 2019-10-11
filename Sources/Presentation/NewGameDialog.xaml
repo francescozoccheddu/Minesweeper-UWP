@@ -36,7 +36,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Slider x:Name="m_widthSlider" Minimum="1" Maximum="24"/>
+                <Slider x:Name="m_widthSlider" Minimum="4" Maximum="24"/>
                 <TextBlock Text="{x:Bind m_widthSlider.Value}" Grid.Column="1"/>
 
             </Grid>
@@ -73,7 +73,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Slider x:Name="m_bombsSlider" Minimum="4" Maximum="{x:Bind MaxBombs(m_widthSlider.Value, m_heightSlider.Value)}"/>
+                <Slider x:Name="m_bombsSlider" Minimum="1" Maximum="{x:Bind MaxBombs(m_widthSlider.Value, m_heightSlider.Value)}"/>
                 <TextBlock Text="{x:Bind m_bombsSlider.Value}" Grid.Column="1"/>
 
             </Grid>
