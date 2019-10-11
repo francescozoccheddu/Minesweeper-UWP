@@ -10,12 +10,15 @@
     x:FieldModifier="private"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Viewbox Stretch="Uniform" Margin="20">
+    <Viewbox Stretch="Uniform" Margin="24">
         <presentation:GridControl x:Name="m_grid"/>
     </Viewbox>
 
     <Page.BottomAppBar>
-        <CommandBar OverflowButtonVisibility="Collapsed" ClosedDisplayMode="Compact" VerticalContentAlignment="Top">
+        <CommandBar OverflowButtonVisibility="Collapsed"
+                    ClosedDisplayMode="Compact" 
+                    VerticalContentAlignment="Top" 
+                    Background="{ThemeResource SystemControlBackgroundAccentBrush}">
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal" Height="{StaticResource AppBarThemeCompactHeight}" VerticalAlignment="Top" Margin="14,0,14,0">
                     <StackPanel Orientation="Horizontal" 
@@ -32,7 +35,7 @@
                         <StackPanel Orientation="Horizontal" 
                                     VerticalAlignment="Center"
                                     Spacing="6" 
-                                    ToolTipService.ToolTip="Mines count">
+                                    ToolTipService.ToolTip="Bombs count">
                             <FontIcon Glyph="b"/>
                             <TextBlock Text="{x:Bind m_grid.Minefield.BombCount}"/>
                         </StackPanel>

@@ -55,8 +55,32 @@ namespace Minesweeper.Presentation
         {
             if (_c.State != CellControl.EState.UNCOVERED)
             {
+                if (_c.State == CellControl.EState.FLAGGED)
+                {
+                    _c.State = CellControl.EState.UNCOVERED;
+                    FlagChanged(_c, false);
+                }
                 _c.State = CellControl.EState.UNCOVERED;
                 Uncovered(_c);
+            }
+        }
+
+        private void FlagChanged(CellControl _c, bool _flagged)
+        {
+            bool couldFlag = ((CellControl.IGrid) this).CanFlag;
+            m_usedFlags += _flagged ? 1 : -1;
+            if (couldFlag != ((CellControl.IGrid) this).CanFlag)
+            {
+                foreach (CellControl c in m_cells)
+                {
+                    c.Update();
+                }
+            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UsedFlags)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CoveredCells)));
+            if (CoveredCells <= 0)
+            {
+                Stop();
             }
         }
 
@@ -67,7 +91,7 @@ namespace Minesweeper.Presentation
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CoveredCells)));
 
             foreach (CellControl nc in Minefield
-                .Expand(_c.Index, _t => m_cells[_t.x, _t.y].State == CellControl.EState.COVERED)
+                .Expand(_c.Index, _t => m_cells[_t.x, _t.y].State != CellControl.EState.UNCOVERED)
                 .Select(_t => m_cells[_t.x, _t.y]))
             {
                 Uncover(nc);
@@ -107,24 +131,7 @@ namespace Minesweeper.Presentation
                     for (int y = 0; y < Minefield.Height; y++)
                     {
                         CellControl cell = new CellControl(Minefield[x, y], (x, y), this);
-                        cell.OnFlagChanged += (_c, _f) =>
-                        {
-                            bool couldFlag = ((CellControl.IGrid) this).CanFlag;
-                            m_usedFlags += _f ? 1 : -1;
-                            if (couldFlag != ((CellControl.IGrid) this).CanFlag)
-                            {
-                                foreach (CellControl c in m_cells)
-                                {
-                                    c.Update();
-                                }
-                            }
-                            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UsedFlags)));
-                            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CoveredCells)));
-                            if (CoveredCells <= 0)
-                            {
-                                Stop();
-                            }
-                        };
+                        cell.OnFlagChanged += FlagChanged;
                         cell.OnUncovered += Uncovered;
                         cell.OnUncoverNeighbors += (_c) =>
                         {

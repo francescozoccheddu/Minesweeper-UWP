@@ -5,7 +5,7 @@
     x:FieldModifier="private">
 
     <UserControl.Resources>
-        <x:Double x:Key="Spacing">10</x:Double>
+        <x:Double x:Key="Spacing">8</x:Double>
     </UserControl.Resources>
 
     <Grid x:Name="m_grid" 

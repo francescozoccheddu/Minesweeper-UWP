@@ -44,7 +44,7 @@
                 <VisualState x:Name="PointerOutside"/>
                 <VisualState x:Name="PointerInside">
                     <VisualState.Setters>
-                        <Setter Target="m_rectangle.Fill" Value="Red"/>
+                        <Setter Target="m_rectangle.Fill" Value="{ThemeResource SystemControlBackgroundAccentBrush}"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -53,7 +53,7 @@
                 <VisualState x:Name="Unfocused"/>
                 <VisualState x:Name="Focused">
                     <VisualState.Setters>
-                        <Setter Target="m_rectangle.Stroke" Value="White"/>
+                        <Setter Target="m_rectangle.Stroke" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -82,7 +82,7 @@
         </VisualStateManager.VisualStateGroups>
 
         <Rectangle x:Name="m_rectangle" 
-                   Fill="DarkGray" 
+                   Fill="{ThemeResource SystemControlBackgroundBaseLowBrush}" 
                    Stroke="Transparent" 
                    StrokeThickness="2" 
                    Width="{StaticResource Size}" 
