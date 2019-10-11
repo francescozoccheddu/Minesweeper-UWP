@@ -77,12 +77,21 @@ namespace Minesweeper.Logic
                 foreach ((int x, int y) in Random(count, _t => m_cells[_t.x, _t.y] == Cell.c_bomb ^ additive))
                 {
                     m_cells[x, y] = drop;
+                    int bombs = 0;
                     foreach ((int nx, int ny) in Neighborhood(x, y))
                     {
                         if (m_cells[nx, ny] != Cell.c_bomb)
                         {
                             m_cells[nx, ny] += influence;
                         }
+                        else
+                        {
+                            bombs++;
+                        }
+                    }
+                    if (!additive)
+                    {
+                        m_cells[x, y] = bombs;
                     }
                 }
             }
@@ -90,24 +99,16 @@ namespace Minesweeper.Logic
 
         private IEnumerable<(int x, int y)> Random(int _count, Predicate<(int x, int y)> _pickable)
         {
-            Random random = new Random();
-            for (int t = 0; t < _count; t++)
+            var random = new Random();
+            while (_count > 0)
             {
-                int r = random.Next(CellCount - t);
-                for (int o = 0; o < CellCount; o++)
+                int r = random.Next(CellCount);
+                (int, int) c = (r % Width, r / Width);
+                if (_pickable(c))
                 {
-                    int c = (r + o) % CellCount;
-                    int x = t % Width;
-                    int y = t / Width;
-                    if (_pickable((x, y)))
-                    {
-                        yield return (x, y);
-                        goto Found;
-                    }
+                    yield return c;
+                    _count--;
                 }
-                throw new OverflowException();
-                Found:
-                ;
             }
         }
 
