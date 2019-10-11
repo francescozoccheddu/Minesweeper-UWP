@@ -121,6 +121,9 @@
     </Compile>
     <Compile Include="Sources\Logic\Minefield.cs" />
     <Compile Include="Sources\Presentation\CellControl.cs" />
+    <Compile Include="Sources\Presentation\CellControl2.xaml.cs">
+      <DependentUpon>CellControl2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Sources\Presentation\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -149,6 +152,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Sources\Presentation\CellControl2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Sources\Presentation\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
