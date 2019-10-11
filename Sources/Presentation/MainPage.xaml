@@ -10,9 +10,8 @@
     x:FieldModifier="private"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <StackPanel>
+    <StackPanel x:Name="Diocane">
 
-        <presentation:CellControl2 Margin="20"/>
 
         <Viewbox x:Name="m_GridSizer" Stretch="Uniform" Visibility="Collapsed">
             <Grid x:Name="m_Grid" 

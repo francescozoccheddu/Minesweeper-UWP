@@ -9,7 +9,26 @@ namespace Minesweeper
 {
     public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
-        public MainPage() => InitializeComponent();
+
+        private struct Cell : Minefield.ICell
+        {
+            public bool IsBomb => false;
+
+            public int Neighbors => 6;
+        }
+
+        private struct CGrid : CellControl2.IGrid
+        {
+            public bool CanFlag => true;
+
+            public bool HasCoveredNeighbors((int, int) _index) => false;
+        }
+
+        public MainPage()
+        {
+            InitializeComponent();
+            Diocane.Children.Add(new CellControl2(new Cell(), (0, 0), new CGrid()));
+        }
 
         private Minefield m_minefield = null;
 

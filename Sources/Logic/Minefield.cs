@@ -23,7 +23,7 @@ namespace Minesweeper.Logic
             {
                 if (_data != c_bomb && (_data < 0 || _data > 8))
                 {
-                    throw new ArgumentOutOfRangeException("Invalid data");
+                    throw new ArgumentOutOfRangeException(nameof(_data));
                 }
                 m_data = _data;
             }
@@ -38,13 +38,17 @@ namespace Minesweeper.Logic
 
         public Minefield(int _w, int _h, int _bombCount)
         {
-            if (_w < 1 || _h < 1 || _w > c_maxSize || _h > c_maxSize)
+            if (_w < 1 || _w > c_maxSize)
             {
-                throw new ArgumentOutOfRangeException("Invalid size");
+                throw new ArgumentOutOfRangeException(nameof(_w));
+            }
+            if (_h < 1 || _h > c_maxSize)
+            {
+                throw new ArgumentOutOfRangeException(nameof(_h));
             }
             if (_bombCount < 0 || _bombCount > _w * _h)
             {
-                throw new ArgumentOutOfRangeException("Invalid bomb count");
+                throw new ArgumentOutOfRangeException(nameof(_bombCount));
             }
             BombCount = _bombCount;
             m_cells = new int[_w, _h];
@@ -109,10 +113,7 @@ namespace Minesweeper.Logic
 
         public IEnumerable<(int x, int y)> Neighborhood(int _x, int _y)
         {
-            if (_x < 0 || _x >= Width || _y < 0 || _y >= Height)
-            {
-                throw new ArgumentOutOfRangeException("Invalid indexes");
-            }
+            ValidateIndex(_x, _y);
             int minX = Math.Max(_x - 1, 0);
             int minY = Math.Max(_y - 1, 0);
             int maxX = Math.Min(_x + 1, Width - 1);
@@ -158,6 +159,18 @@ namespace Minesweeper.Logic
         public int BombCount { get; }
         public ICell this[int _x, int _y] => new Cell(m_cells[_x, _y]);
         public ICell this[(int x, int y) _p] => this[_p.x, _p.y];
+
+        public void ValidateIndex(int _x, int _y)
+        {
+            if (_x < 0 || _x >= Width)
+            {
+                throw new ArgumentOutOfRangeException(nameof(_x));
+            }
+            if (_y < 0 || _y >= Height)
+            {
+                throw new ArgumentOutOfRangeException(nameof(_y));
+            }
+        }
 
     }
 

@@ -1,20 +1,99 @@
-﻿using Windows.System;
+﻿using Minesweeper.Logic;
+using System;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
 namespace Minesweeper.Presentation
 {
-    public sealed partial class CellControl2 : UserControl
+    internal sealed partial class CellControl2 : UserControl
     {
-        public CellControl2()
+
+        public interface IGrid
         {
+
+            bool CanFlag { get; }
+
+            bool HasCoveredNeighbors((int, int) _index);
+
+        }
+
+        public CellControl2(Minefield.ICell _data, (int x, int y) _index, IGrid _grid)
+        {
+            if (_data == null)
+            {
+                throw new ArgumentNullException(nameof(_data));
+            }
+            if (_grid == null)
+            {
+                throw new ArgumentNullException(nameof(_grid));
+            }
+            m_grid = _grid;
+            Index = _index;
+            m_uncoveredGlyph = _data.IsBomb ? "b" : _data.Neighbors.ToString();
+            // Initialize
             InitializeComponent();
             IsTabStop = true;
             IsTapEnabled = true;
             IsRightTapEnabled = true;
-            UpdateIsEnabled();
+            Update();
         }
+
+        private readonly IGrid m_grid;
+
+        public enum EState
+        {
+            FLAGGED, UNCOVERED, COVERED
+        }
+
+        public delegate void FlagEventHandler(CellControl2 _sender, bool _flagged);
+        public delegate void UncoverEventHandler(CellControl2 _sender);
+
+        public event FlagEventHandler OnFlagChanged;
+        public event UncoverEventHandler OnUncovered;
+        public event UncoverEventHandler OnUncoverNeighbors;
+
+        private EState m_state = EState.COVERED;
+
+        private readonly String m_uncoveredGlyph;
+
+        public EState State
+        {
+            get => m_state;
+            set
+            {
+                if (m_state != value)
+                {
+                    m_state = value;
+                    Update();
+                }
+            }
+        }
+
+        public void Update()
+        {
+            switch (State)
+            {
+                case EState.FLAGGED:
+                m_CanFlag = true;
+                m_CanUncover = true;
+                VisualStateManager.GoToState(this, "StateFlagged", true);
+                break;
+                case EState.UNCOVERED:
+                m_CanFlag = false;
+                m_CanUncover = m_grid.HasCoveredNeighbors(Index);
+                VisualStateManager.GoToState(this, "StateUncovered", true);
+                break;
+                case EState.COVERED:
+                m_CanFlag = m_grid.CanFlag;
+                m_CanUncover = true;
+                VisualStateManager.GoToState(this, "StateCovered", true);
+                break;
+            }
+        }
+
+        public (int x, int y) Index { get; }
 
         private bool m_canUncover;
         private bool m_CanUncover
@@ -54,20 +133,39 @@ namespace Minesweeper.Presentation
 
         private void Flag()
         {
-
+            switch (State)
+            {
+                case EState.FLAGGED:
+                State = EState.COVERED;
+                break;
+                case EState.COVERED:
+                State = EState.FLAGGED;
+                break;
+            }
+            OnFlagChanged?.Invoke(this, State == EState.COVERED);
         }
 
         private void Uncover()
         {
-
+            switch (State)
+            {
+                case EState.FLAGGED:
+                State = EState.COVERED;
+                OnFlagChanged?.Invoke(this, false);
+                break;
+                case EState.COVERED:
+                State = EState.UNCOVERED;
+                OnUncovered?.Invoke(this);
+                break;
+                case EState.UNCOVERED:
+                OnUncoverNeighbors?.Invoke(this);
+                break;
+            }
         }
 
         #region Input
 
-        public void UpdateIsEnabled()
-        {
-            IsEnabled = m_CanFlag || m_CanUncover;
-        }
+        public void UpdateIsEnabled() => IsEnabled = m_CanFlag || m_CanUncover;
 
         private enum EInputType
         {
