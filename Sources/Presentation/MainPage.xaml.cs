@@ -14,6 +14,7 @@ namespace Minesweeper
 
         private bool IsNotNull(object _obj) => _obj != null;
 
+        private double AnastasioOpacity(int? _covered, int _total) => (1.0 - (_covered ?? _total) / (double) _total) * 0.25;
         private Visibility IsNotNullVis(object _obj) => BoolToVisibility(IsNotNull(_obj));
 
         private Visibility BoolToVisibility(bool _b) => _b ? Visibility.Visible : Visibility.Collapsed;

@@ -233,7 +233,7 @@ namespace Minesweeper.Presentation
                 case VirtualKey.Enter:
                 return EInputType.KeyUncover;
                 case VirtualKey.F:
-                case VirtualKey.Delete:
+                case VirtualKey.Back:
                 return EInputType.KeyFlag;
                 default:
                 return null;
