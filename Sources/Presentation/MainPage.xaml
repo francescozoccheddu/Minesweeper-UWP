@@ -58,27 +58,39 @@
             </CommandBar.Content>
             <CommandBar.PrimaryCommands>
                 <AppBarButton Label="New game" 
-                              ToolTipService.ToolTip="New game" 
+                              ToolTipService.ToolTip="New game (CTRL+N)" 
+                              AccessKey="N"
                               Click="NewGameButton_Click">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="n"/>
                     </AppBarButton.Icon>
+                    <AppBarButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="N" Modifiers="Control"/>
+                    </AppBarButton.KeyboardAccelerators>
                 </AppBarButton>
                 <AppBarButton Label="Restart game" 
-                              ToolTipService.ToolTip="Restart game" 
+                              ToolTipService.ToolTip="Restart game (CTRL+R)" 
+                              AccessKey="R"
                               Click="ResetButton_Click" 
                               IsEnabled="{x:Bind IsNotNull(m_grid.Minefield)}">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="r"/>
                     </AppBarButton.Icon>
+                    <AppBarButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="R" Modifiers="Control"/>
+                    </AppBarButton.KeyboardAccelerators>
                 </AppBarButton>
                 <AppBarButton Label="I'm feeling lucky" 
-                              ToolTipService.ToolTip="I'm feeling lucky" 
+                              ToolTipService.ToolTip="I'm feeling lucky (CTRL+L)"
+                              AccessKey="L"
                               Click="LuckyButton_Click" 
                               IsEnabled="{x:Bind m_grid.Playing}">
                     <AppBarButton.Icon>
                         <FontIcon x:Name="m_luckyIcon" Glyph="l"/>
                     </AppBarButton.Icon>
+                    <AppBarButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="L" Modifiers="Control"/>
+                    </AppBarButton.KeyboardAccelerators>
                 </AppBarButton>
             </CommandBar.PrimaryCommands>
         </CommandBar>
