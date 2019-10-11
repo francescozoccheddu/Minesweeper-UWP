@@ -20,14 +20,28 @@ namespace Minesweeper.Presentation
     {
         public NewGameDialog()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         private double MaxBombs(double _w, double _h) => ((int) _w) * ((int) _h) - 1;
 
-        public int WidthSetting => (int) m_widthSlider.Value;
-        public int HeightSetting => (int) m_heightSlider.Value;
-        public int BombsCountSetting => (int) m_bombsSlider.Value;
+        public int WidthSetting
+        {
+            get => (int) m_widthSlider.Value;
+            set => m_widthSlider.Value = value;
+        }
+        public int HeightSetting
+        {
+            get => (int) m_heightSlider.Value;
+            set => m_heightSlider.Value = value;
+        }
+        public int BombsCountSetting
+        {
+            get => (int) m_bombsSlider.Value;
+            set => m_bombsSlider.Value = value;
+        }
+
+        private Visibility WillBeSlowVis(double _w, double _h, int _th) => _w * _h > _th ? Visibility.Visible : Visibility.Collapsed;
 
     }
 }

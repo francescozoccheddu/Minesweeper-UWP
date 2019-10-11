@@ -24,7 +24,12 @@ namespace Minesweeper
 
         private async void NewGameButton_Click(object _sender, RoutedEventArgs _e)
         {
-            NewGameDialog dialog = new NewGameDialog();
+            NewGameDialog dialog = new NewGameDialog()
+            {
+                WidthSetting = m_grid.Minefield?.Width ?? 8,
+                HeightSetting = m_grid.Minefield?.Height ?? 6,
+                BombsCountSetting = m_grid.Minefield?.BombCount ?? 10
+            };
             ContentDialogResult result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {

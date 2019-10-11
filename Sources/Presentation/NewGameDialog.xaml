@@ -54,12 +54,13 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Slider x:Name="m_heightSlider" Minimum="1" Maximum="24"/>
+                <Slider x:Name="m_heightSlider" Minimum="4" Maximum="24"/>
                 <TextBlock Text="{x:Bind m_heightSlider.Value}" Grid.Column="1"/>
 
             </Grid>
 
         </StackPanel>
+
 
         <StackPanel Style="{StaticResource HeaderedStackPanel}">
 
@@ -72,12 +73,19 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Slider x:Name="m_bombsSlider" Minimum="1" Maximum="{x:Bind MaxBombs(m_widthSlider.Value, m_heightSlider.Value)}"/>
+                <Slider x:Name="m_bombsSlider" Minimum="4" Maximum="{x:Bind MaxBombs(m_widthSlider.Value, m_heightSlider.Value)}"/>
                 <TextBlock Text="{x:Bind m_bombsSlider.Value}" Grid.Column="1"/>
 
             </Grid>
 
         </StackPanel>
+
+        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" 
+                   Foreground="{StaticResource SystemErrorTextColor}"
+                   Visibility="{x:Bind WillBeSlowVis(m_widthSlider.Value, m_heightSlider.Value, 200)}"
+                   >
+                This may take some time 😉
+        </TextBlock>
 
     </StackPanel>
 
