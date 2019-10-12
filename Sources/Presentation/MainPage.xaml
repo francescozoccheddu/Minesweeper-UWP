@@ -15,6 +15,24 @@
                VerticalAlignment="Bottom" 
                Opacity="{x:Bind AnastasioOpacity(m_grid.CoveredCells, m_grid.Minefield.CellCount), FallbackValue=0}" />
 
+        <StackPanel Orientation="Vertical" 
+                    Spacing="10" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center"
+                    Visibility="{x:Bind IsNullVis(m_grid.Minefield)}"
+                    >
+
+            <TextBlock Style="{StaticResource HeaderTextBlockStyle}" 
+                       HorizontalAlignment="Center">
+                Welcome!
+            </TextBlock>
+            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
+                       HorizontalAlignment="Center">
+                Tap <Run FontFamily="{StaticResource IconFont}">n</Run> button to start
+            </TextBlock>
+
+        </StackPanel>
+
         <Viewbox Stretch="Uniform" Margin="24">
             <presentation:GridControl x:Name="m_grid"/>
         </Viewbox>
@@ -70,8 +88,7 @@
                 </StackPanel>
             </CommandBar.Content>
             <CommandBar.PrimaryCommands>
-                <AppBarButton Label="New game" 
-                              ToolTipService.ToolTip="New game (CTRL+N)" 
+                <AppBarButton ToolTipService.ToolTip="New game (CTRL+N)" 
                               AccessKey="N"
                               Click="NewGameButton_Click">
                     <AppBarButton.Icon>
@@ -81,8 +98,7 @@
                         <KeyboardAccelerator Key="N" Modifiers="Control"/>
                     </AppBarButton.KeyboardAccelerators>
                 </AppBarButton>
-                <AppBarButton Label="Restart game" 
-                              ToolTipService.ToolTip="Restart game (CTRL+R)" 
+                <AppBarButton ToolTipService.ToolTip="Restart game (CTRL+R)" 
                               AccessKey="R"
                               Click="ResetButton_Click" 
                               IsEnabled="{x:Bind IsNotNull(m_grid.Minefield)}">
@@ -93,8 +109,7 @@
                         <KeyboardAccelerator Key="R" Modifiers="Control"/>
                     </AppBarButton.KeyboardAccelerators>
                 </AppBarButton>
-                <AppBarButton Label="I'm feeling lucky" 
-                              ToolTipService.ToolTip="I'm feeling lucky (CTRL+L)"
+                <AppBarButton ToolTipService.ToolTip="I'm feeling lucky (CTRL+L)"
                               AccessKey="L"
                               Click="LuckyButton_Click" 
                               IsEnabled="{x:Bind m_grid.Playing}">

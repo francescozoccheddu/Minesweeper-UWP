@@ -35,7 +35,7 @@ namespace Minesweeper
                     return true;
                 }
             }
-            catch (Exception _e)
+            catch
             {
                 return false;
             }
@@ -60,7 +60,7 @@ namespace Minesweeper
                     return null;
                 }
             }
-            catch (Exception _e)
+            catch
             {
                 return null;
             }
@@ -101,6 +101,7 @@ namespace Minesweeper
             await RunOnUIThread(() =>
             {
                 save?.Restore(m_grid);
+                m_luckyIcon.Glyph = "l";
                 m_commandBar.IsEnabled = true;
             });
             return save != null;
@@ -111,14 +112,11 @@ namespace Minesweeper
         #region XAML Helpers
 
         private bool IsNotNull(object _obj) => _obj != null;
-
-        private double AnastasioOpacity(int? _covered, int _total) => (1.0 - (_covered ?? _total) / (double) _total) * 0.25;
-        private Visibility IsNotNullVis(object _obj) => BoolToVisibility(IsNotNull(_obj));
-
+        private double AnastasioOpacity(int? _covered, int _total) => (1.0 - (_covered ?? _total) / (double) _total) * 0.1;
+        private Visibility IsNotNullVis(object _obj) => BoolToVisibility(_obj != null);
+        private Visibility IsNullVis(object _obj) => BoolToVisibility(_obj == null);
         private Visibility BoolToVisibility(bool _b) => _b ? Visibility.Visible : Visibility.Collapsed;
-
         private string GridSizeString(int _w, int _h) => $"{_w}x{_h}";
-
         private string DenominatorString(int _n) => $"/{_n}";
 
         #endregion
