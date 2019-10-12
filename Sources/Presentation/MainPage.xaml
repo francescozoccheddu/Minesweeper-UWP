@@ -52,14 +52,15 @@
                         <StackPanel Orientation="Horizontal" 
                                     VerticalAlignment="Center"
                                     Spacing="10"
-                                    ToolTipService.ToolTip="Flag count">
+                                    ToolTipService.ToolTip="Flag count"
+                                    Visibility="{x:Bind m_grid.Playing}">
                             <FontIcon Glyph="f"/>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{x:Bind m_grid.UsedFlags}"/>
                                 <TextBlock FontSize="10" Text="{x:Bind DenominatorString(m_grid.Minefield.BombCount)}"/>
                             </StackPanel>
                         </StackPanel>
-                        <AppBarSeparator/>
+                        <AppBarSeparator Visibility="{x:Bind m_grid.Playing}"/>
                     </StackPanel>
                     <TextBlock VerticalAlignment="Center"
                                FontSize="10"
