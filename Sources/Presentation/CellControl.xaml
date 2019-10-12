@@ -2,7 +2,9 @@
     x:Class="Minesweeper.Presentation.CellControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    x:FieldModifier="private">
+    x:FieldModifier="private"
+    Loaded="UserControl_Loaded"
+    >
 
     <UserControl.Resources>
         <x:Double x:Key="Size">40</x:Double>

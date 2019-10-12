@@ -1,5 +1,6 @@
 ﻿using Minesweeper.Logic;
 using System;
+using System.Runtime.Serialization;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -20,6 +21,8 @@ namespace Minesweeper.Presentation
             Control GetFocusNeighbor((int x, int y) _index);
 
         }
+
+        #region Public interface
 
         public CellControl(Minefield.ICell _data, (int x, int y) _index, IGrid _grid)
         {
@@ -43,8 +46,6 @@ namespace Minesweeper.Presentation
             Update();
         }
 
-        private readonly IGrid m_grid;
-
         public enum EState
         {
             FLAGGED, UNCOVERED, COVERED
@@ -56,11 +57,6 @@ namespace Minesweeper.Presentation
         public event FlagEventHandler OnFlagChanged;
         public event UncoverEventHandler OnUncovered;
         public event UncoverEventHandler OnUncoverNeighbors;
-
-        private EState m_state = EState.COVERED;
-
-        private readonly string m_uncoveredGlyph;
-        private readonly bool m_hasNeighbors;
 
         public EState State
         {
@@ -75,8 +71,12 @@ namespace Minesweeper.Presentation
             }
         }
 
+        public (int x, int y) Index { get; }
+
         public void Update()
         {
+            if (!IsLoaded)
+                return;
             switch (State)
             {
                 case EState.FLAGGED:
@@ -97,7 +97,22 @@ namespace Minesweeper.Presentation
             }
         }
 
-        public (int x, int y) Index { get; }
+        #endregion
+
+        #region Private implementation
+
+        private EState m_state = EState.COVERED;
+
+        private readonly IGrid m_grid;
+        private readonly string m_uncoveredGlyph;
+        private readonly bool m_hasNeighbors;
+
+
+        private void UserControl_Loaded(object _sender, RoutedEventArgs _e)
+        {
+            Update();
+        }
+
 
         private bool m_canUncover;
         private bool m_CanUncover
@@ -166,6 +181,8 @@ namespace Minesweeper.Presentation
                 break;
             }
         }
+
+        #endregion
 
         #region Input
 

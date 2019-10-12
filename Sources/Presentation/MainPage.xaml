@@ -5,6 +5,7 @@
     xmlns:presentation="using:Minesweeper.Presentation"
     x:DefaultBindMode="OneWay"
     x:FieldModifier="private"
+    Loaded="Page_Loaded"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
@@ -21,9 +22,11 @@
     </Grid>
 
     <Page.BottomAppBar>
-        <CommandBar OverflowButtonVisibility="Collapsed"
+        <CommandBar x:Name="m_commandBar"
+                    OverflowButtonVisibility="Collapsed"
                     ClosedDisplayMode="Compact" 
                     VerticalContentAlignment="Top" 
+                    IsEnabled="False"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}">
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal" Height="{StaticResource AppBarThemeCompactHeight}" VerticalAlignment="Top" Margin="14,0,14,0">

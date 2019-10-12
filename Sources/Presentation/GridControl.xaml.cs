@@ -2,23 +2,82 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Minesweeper.Presentation
 {
-    // Serialize minefield and cell state grid
     internal sealed partial class GridControl : UserControl, CellControl.IGrid, INotifyPropertyChanged
     {
 
+        [DataContract]
+        public class SaveGame
+        {
+            [DataMember(IsRequired = true)]
+            private int m_seed;
+            [DataMember(IsRequired = true)]
+            private int m_width;
+            [DataMember(IsRequired = true)]
+            private int m_height;
+            [DataMember(IsRequired = true)]
+            private int m_bombsCount;
+            [DataMember(IsRequired = true)]
+            private CellControl.EState[] m_states;
+
+            public void Restore(GridControl _grid)
+            {
+                if (m_bombsCount > 0)
+                {
+                    _grid.Minefield = new Minefield(m_width, m_height, m_bombsCount, m_seed);
+                    int ci = 0;
+                    foreach (CellControl c in _grid.m_cells)
+                    {
+                        CellControl.EState state = m_states[ci++];
+                        c.State = state;
+                        switch (state)
+                        {
+                            case CellControl.EState.FLAGGED:
+                            _grid.m_usedFlags++;
+                            break;
+                            case CellControl.EState.UNCOVERED:
+                            _grid.m_uncoveredCells++;
+                            break;
+                        }
+                    }
+                    _grid.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UsedFlags)));
+                    _grid.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UncoveredCells)));
+                    _grid.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CoveredCells)));
+                    if (_grid.CoveredCells <= 0)
+                    {
+                        _grid.Stop();
+                    }
+                }
+                else
+                {
+                    _grid.Minefield = null;
+                }
+            }
+
+            private SaveGame()
+            {
+
+            }
+
+            public static SaveGame Save(GridControl _grid) => new SaveGame()
+            {
+                m_seed = _grid.Minefield?.Seed ?? 0,
+                m_width = _grid.Minefield?.Width ?? 0,
+                m_height = _grid.Minefield?.Height ?? 0,
+                m_bombsCount = _grid.Minefield?.BombCount ?? 0,
+                m_states = _grid.m_cells != null ? (from CellControl c in _grid.m_cells select c.State).ToArray() : null
+            };
+
+        }
+
+        #region Public interface
+
         public GridControl() => InitializeComponent();
-
-        private Minefield m_minefield;
-        private int m_usedFlags;
-        private int m_uncoveredCells;
-        private CellControl[,] m_cells;
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public Minefield Minefield
         {
@@ -47,9 +106,67 @@ namespace Minesweeper.Presentation
         public int? CoveredCells => Minefield != null ? (Minefield.CellCount - UncoveredCells - UsedFlags) : null;
         public bool Playing { get; private set; }
 
-        bool CellControl.IGrid.CanFlag => UsedFlags < Minefield.BombCount;
+        public void Stop()
+        {
+            if (Playing)
+            {
+                IsEnabled = false;
+                Playing = false;
+                m_uncoveredCells = Minefield.CellCount;
+                m_usedFlags = 0;
+                foreach (CellControl c in m_cells)
+                {
+                    c.State = CellControl.EState.UNCOVERED;
+                }
+                foreach (CellControl c in m_cells)
+                {
+                    c.Update();
+                }
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UsedFlags)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UncoveredCells)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CoveredCells)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Playing)));
+            }
+        }
 
-        UIElement CellControl.IGrid.FocusSearchRoot => m_grid;
+        public void Restart()
+        {
+            if (Minefield == null)
+            {
+                throw new InvalidOperationException();
+            }
+            Minefield = new Minefield(Minefield.Width, Minefield.Height, Minefield.BombCount);
+        }
+
+        public bool TryLuck()
+        {
+            int r = new Random().Next(CoveredCells.Value);
+            for (int o = 0; o < Minefield.CellCount; o++)
+            {
+                CellControl c = (CellControl) m_grid.Children[(r + o) % Minefield.CellCount];
+                if (c.State == CellControl.EState.COVERED)
+                {
+                    Uncover(c);
+                    if (m_minefield[c.Index].IsBomb)
+                    {
+                        return true;
+                    }
+                    break;
+                }
+            }
+            return false;
+        }
+
+        #endregion
+
+        #region Private implementation
+
+        private Minefield m_minefield;
+        private int m_usedFlags;
+        private int m_uncoveredCells;
+        private CellControl[,] m_cells;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private void Uncover(CellControl _c)
         {
@@ -162,60 +279,20 @@ namespace Minesweeper.Presentation
             }
         }
 
-        public void Stop()
-        {
-            if (Playing)
-            {
-                IsEnabled = false;
-                Playing = false;
-                m_uncoveredCells = Minefield.CellCount;
-                m_usedFlags = 0;
-                foreach (CellControl c in m_cells)
-                {
-                    c.State = CellControl.EState.UNCOVERED;
-                }
-                foreach (CellControl c in m_cells)
-                {
-                    c.Update();
-                }
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UsedFlags)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UncoveredCells)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CoveredCells)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Playing)));
-            }
-        }
+        #endregion
 
-        public void Restart()
-        {
-            if (Minefield == null)
-            {
-                throw new InvalidOperationException();
-            }
-            Minefield = new Minefield(Minefield.Width, Minefield.Height, Minefield.BombCount);
-        }
+        #region CellControl.IGrid
 
-        public bool TryLuck()
-        {
-            int r = new Random().Next(CoveredCells.Value);
-            for (int o = 0; o < Minefield.CellCount; o++)
-            {
-                CellControl c = (CellControl) m_grid.Children[(r + o) % Minefield.CellCount];
-                if (c.State == CellControl.EState.COVERED)
-                {
-                    Uncover(c);
-                    if (m_minefield[c.Index].IsBomb)
-                    {
-                        return true;
-                    }
-                    break;
-                }
-            }
-            return false;
-        }
+        bool CellControl.IGrid.CanFlag => UsedFlags < Minefield.BombCount;
+
+        UIElement CellControl.IGrid.FocusSearchRoot => m_grid;
 
         Control CellControl.IGrid.GetFocusNeighbor((int x, int y) _index) =>
             Minefield.Neighborhood(_index)
             .Select(_i => m_cells[_i.x, _i.y])
             .FirstOrDefault(_c => _c.State != CellControl.EState.UNCOVERED);
+
+        #endregion
+
     }
 }
